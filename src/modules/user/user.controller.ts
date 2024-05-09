@@ -1,13 +1,19 @@
 import { Request, Response } from 'express';
 import { UserServices } from './user.service';
+import { userValidationSchema } from './user.validation';
 
 const createStudent = async (req: Request, res: Response) => {
   const { user: userData } = req.body;
-  const result = await UserServices.createUserIntoDB(userData);
+  const zodParseData = userValidationSchema.parse(userData);
+  const result = await UserServices.createUserIntoDB(zodParseData);
+  const resultObject = result.toObject();
+
+  // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
+  const { orders, _id, ...responseWithoutOrders } = resultObject;
   res.status(200).json({
     success: true,
     message: 'User is created successfully',
-    data: result,
+    data: responseWithoutOrders,
   });
 };
 const getAllStudents = async (req: Request, res: Response) => {
@@ -31,6 +37,7 @@ const updateUser = async (req: Request, res: Response) => {
   const { userId } = req.params;
   const updateDoc = req.body;
   const result = await UserServices.updateUserIntoDB(userId, updateDoc);
+
   res.status(200).json({
     success: true,
     message: 'User is updated successfully',
@@ -39,7 +46,6 @@ const updateUser = async (req: Request, res: Response) => {
 };
 const deleteUser = async (req: Request, res: Response) => {
   const { userId } = req.params;
-  console.log(userId);
   const result = await UserServices.deleteUserFromDB(userId);
   res.status(200).json({
     success: true,

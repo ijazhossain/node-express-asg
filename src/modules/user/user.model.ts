@@ -11,13 +11,21 @@ const addressSchema = new Schema<TAddress>({
 });
 const orderSchema = new Schema<TOrders>({
   productName: { type: String, required: [true, 'product name is required'] },
-  price: { type: String, required: [true, 'price is required'] },
-  quantity: { type: String, required: [true, 'quantity is required'] },
+  price: { type: Number, required: [true, 'price is required'] },
+  quantity: { type: Number, required: [true, 'quantity is required'] },
 });
 
 const userSchema = new Schema<TUser>({
-  userId: { type: Number, required: [true, 'User ID is required'] },
-  userName: { type: String, required: [true, 'UserName is required'] },
+  userId: {
+    type: Number,
+    required: [true, 'User ID is required'],
+    unique: true,
+  },
+  userName: {
+    type: String,
+    required: [true, 'UserName is required'],
+    unique: true,
+  },
   password: { type: String, required: [true, 'Password is required'] },
   fullName: { type: userNameSchema, required: [true, 'FullName is required'] },
   age: { type: Number, required: [true, 'Age is required'] },
