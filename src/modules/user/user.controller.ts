@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Request, Response } from 'express';
 import { UserServices } from './user.service';
 import { userValidationSchema } from './user.validation';
@@ -97,10 +98,35 @@ const deleteUser = async (req: Request, res: Response) => {
     });
   }
 };
+const addNewProductInOrder = async (req: Request, res: Response) => {
+  try {
+    const newProduct = req.body;
+    const { userId } = req.params;
+    const result = await UserServices.addNewProductInOrderInDB(
+      userId,
+      newProduct,
+    );
+    res.status(200).json({
+      success: true,
+      message: 'User is deleted successfully',
+      data: result,
+    });
+  } catch (err: any) {
+    res.status(400).json({
+      success: false,
+      message: err.message || 'Failed to fetch user data',
+      error: {
+        code: 404,
+        description: 'User not found',
+      },
+    });
+  }
+};
 export const UserControllers = {
   createStudent,
   getAllStudents,
   getSingleUser,
   updateUser,
   deleteUser,
+  addNewProductInOrder,
 };

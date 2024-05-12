@@ -69,5 +69,13 @@ userSchema.pre(/^find/, function (this: Query<TUser, Document>, next) {
   this.find({ isActive: { $eq: true } });
   next();
 });
+userSchema.pre('find', function (next) {
+  this.find({ isActive: { $eq: true } });
+  next();
+});
+userSchema.pre('findOne', function (next) {
+  this.find({ isActive: { $eq: true } });
+  next();
+});
 
 export const User = model<TUser, UserModel>('User', userSchema);
