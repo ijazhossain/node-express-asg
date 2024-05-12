@@ -9,7 +9,7 @@ const createStudent = async (req: Request, res: Response) => {
   const resultObject = result.toObject();
 
   // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
-  const { orders, _id, ...responseWithoutOrders } = resultObject;
+  const { orders, _id, password, __v, ...responseWithoutOrders } = resultObject;
   res.status(200).json({
     success: true,
     message: 'User is created successfully',
@@ -17,41 +17,85 @@ const createStudent = async (req: Request, res: Response) => {
   });
 };
 const getAllStudents = async (req: Request, res: Response) => {
-  const result = await UserServices.getAllUsersFromDB();
-  res.status(200).json({
-    success: true,
-    message: 'All users retrieved  successfully',
-    data: result,
-  });
+  try {
+    const result = await UserServices.getAllUsersFromDB();
+    res.status(200).json({
+      success: true,
+      message: 'All users retrieved  successfully',
+      data: result,
+    });
+  } catch (err: any) {
+    res.status(400).json({
+      success: false,
+      message: err.message || 'Failed to fetch user data',
+      error: {
+        code: 404,
+        description: 'User not found',
+      },
+    });
+  }
 };
 const getSingleUser = async (req: Request, res: Response) => {
-  const { userId } = req.params;
-  const result = await UserServices.getSingleUserFromDB(userId);
-  res.status(200).json({
-    success: true,
-    message: 'User is retrieved  successfully',
-    data: result,
-  });
+  try {
+    const { userId } = req.params;
+    const result = await UserServices.getSingleUserFromDB(userId);
+    res.status(200).json({
+      success: true,
+      message: 'User is retrieved  successfully',
+      data: result,
+    });
+  } catch (err: any) {
+    res.status(400).json({
+      success: false,
+      message: err.message || 'Failed to fetch user data',
+      error: {
+        code: 404,
+        description: 'User not found',
+      },
+    });
+  }
 };
 const updateUser = async (req: Request, res: Response) => {
-  const { userId } = req.params;
-  const updateDoc = req.body;
-  const result = await UserServices.updateUserIntoDB(userId, updateDoc);
+  try {
+    const { userId } = req.params;
+    const updateDoc = req.body;
+    const result = await UserServices.updateUserIntoDB(userId, updateDoc);
 
-  res.status(200).json({
-    success: true,
-    message: 'User is updated successfully',
-    data: result,
-  });
+    res.status(200).json({
+      success: true,
+      message: 'User is updated successfully',
+      data: result,
+    });
+  } catch (err: any) {
+    res.status(400).json({
+      success: false,
+      message: err.message || 'Failed to fetch user data',
+      error: {
+        code: 404,
+        description: 'User not found',
+      },
+    });
+  }
 };
 const deleteUser = async (req: Request, res: Response) => {
-  const { userId } = req.params;
-  const result = await UserServices.deleteUserFromDB(userId);
-  res.status(200).json({
-    success: true,
-    message: 'User is deleted successfully',
-    data: result,
-  });
+  try {
+    const { userId } = req.params;
+    const result = await UserServices.deleteUserFromDB(userId);
+    res.status(200).json({
+      success: true,
+      message: 'User is deleted successfully',
+      data: result,
+    });
+  } catch (err: any) {
+    res.status(400).json({
+      success: false,
+      message: err.message || 'Failed to fetch user data',
+      error: {
+        code: 404,
+        description: 'User not found',
+      },
+    });
+  }
 };
 export const UserControllers = {
   createStudent,

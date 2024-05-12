@@ -2,6 +2,9 @@ import { TUser } from './user.interface';
 import { User } from './user.model';
 
 const createUserIntoDB = async (userData: TUser) => {
+  if (await User.isUserExists(userData.userId)) {
+    throw Error('User already exists!');
+  }
   const result = await User.create(userData);
   return result;
 };
@@ -15,6 +18,9 @@ const getAllUsersFromDB = async () => {
   return result;
 };
 const getSingleUserFromDB = async (userId: string) => {
+  if (!(await User.isUserExists(userId))) {
+    throw new Error('User does not exists!');
+  }
   const result = await User.findOne({ userId }).select({
     password: 0,
     orders: 0,
@@ -24,6 +30,9 @@ const getSingleUserFromDB = async (userId: string) => {
   return result;
 };
 const updateUserIntoDB = async (userId: string, updateDoc: TUser) => {
+  if (!(await User.isUserExists(userId))) {
+    throw Error('User does not exists!');
+  }
   const result = await User.findOneAndUpdate(
     { userId },
     { $set: updateDoc },
@@ -40,6 +49,9 @@ const updateUserIntoDB = async (userId: string, updateDoc: TUser) => {
   return result;
 };
 const deleteUserFromDB = async (userId: string) => {
+  if (!(await User.isUserExists(userId))) {
+    throw Error('User does not exists!');
+  }
   const result = await User.updateOne({ userId }, { isActive: false });
   return result;
 };

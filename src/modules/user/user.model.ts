@@ -1,5 +1,13 @@
 import { Schema, model } from 'mongoose';
-import { TAddress, TOrders, TUser, TUserName } from './user.interface';
+import {
+  TAddress,
+  TOrders,
+  TUser,
+  TUserName,
+  UserModel,
+} from './user.interface';
+import bcrypt from 'bcrypt';
+import config from '../../app/config';
 const userNameSchema = new Schema<TUserName>({
   firstName: { type: String, required: true },
   lastName: { type: String, required: true },
@@ -35,4 +43,24 @@ const userSchema = new Schema<TUser>({
   address: { type: addressSchema, required: [true, 'Address is required'] },
   orders: { type: [orderSchema], default: [] },
 });
-export const User = model<TUser>('User', userSchema);
+// static method to check the user existence
+userSchema.statics.isUserExists = async function (userId: string) {
+  const existingUser = await User.findOne({ userId });
+  return existingUser;
+};
+
+// middleware to bcrypt password field
+userSchema.pre('save', async function (next) {
+  //   console.log(this);
+  this.password = await bcrypt.hash(
+    this.password,
+    Number(config.bcrypt_salt_round),
+  );
+  next();
+});
+// middleware to hide password field
+userSchema.post('save', function (doc, next) {
+  doc.password = '';
+  next();
+});
+export const User = model<TUser, UserModel>('User', userSchema);
