@@ -10,7 +10,7 @@ const createStudent = async (req: Request, res: Response) => {
   const resultObject = result.toObject();
 
   // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
-  const { orders, _id, password, __v, ...responseWithoutOrders } = resultObject;
+  const { orders, _id, password, ...responseWithoutOrders } = resultObject;
   res.status(200).json({
     success: true,
     message: 'User is created successfully',
@@ -108,8 +108,48 @@ const addNewProductInOrder = async (req: Request, res: Response) => {
     );
     res.status(200).json({
       success: true,
-      message: 'User is deleted successfully',
+      message: 'Order created successfully!',
       data: result,
+    });
+  } catch (err: any) {
+    res.status(400).json({
+      success: false,
+      message: err.message || 'Failed to fetch user data',
+      error: {
+        code: 404,
+        description: 'User not found',
+      },
+    });
+  }
+};
+const getAllOrders = async (req: Request, res: Response) => {
+  try {
+    const { userId } = req.params;
+    const result = await UserServices.getAllOrdersFromDB(userId);
+    res.status(200).json({
+      success: true,
+      message: 'Order fetched successfully!',
+      data: result,
+    });
+  } catch (err: any) {
+    res.status(400).json({
+      success: false,
+      message: err.message || 'Failed to fetch user data',
+      error: {
+        code: 404,
+        description: 'User not found',
+      },
+    });
+  }
+};
+const getTotalPrice = async (req: Request, res: Response) => {
+  try {
+    const { userId } = req.params;
+    const result = await UserServices.getTotalPriceFromDB(userId);
+    res.status(200).json({
+      success: true,
+      message: 'Total price calculated successfully!',
+      data: { totalPrice: result },
     });
   } catch (err: any) {
     res.status(400).json({
@@ -129,4 +169,6 @@ export const UserControllers = {
   updateUser,
   deleteUser,
   addNewProductInOrder,
+  getAllOrders,
+  getTotalPrice,
 };

@@ -68,7 +68,26 @@ const addNewProductInOrderInDB = async (
   );
   return result;
 };
-
+const getAllOrdersFromDB = async (userId: string) => {
+  if (!(await User.isUserExists(userId))) {
+    throw Error('User does not exists!');
+  }
+  const result = await User.findOne({ userId }).select({
+    orders: 1,
+    _id: 0,
+  });
+  return result;
+};
+const getTotalPriceFromDB = async (userId: string) => {
+  if (!(await User.isUserExists(userId))) {
+    throw Error('User do not exists!');
+  }
+  const user = await User.findOne({ userId });
+  const totalPrice = user?.orders
+    ?.reduce((acc, order) => acc + order.quantity * order.price, 0)
+    .toFixed(2);
+  return Number(totalPrice);
+};
 export const UserServices = {
   createUserIntoDB,
   getAllUsersFromDB,
@@ -76,4 +95,6 @@ export const UserServices = {
   updateUserIntoDB,
   deleteUserFromDB,
   addNewProductInOrderInDB,
+  getAllOrdersFromDB,
+  getTotalPriceFromDB,
 };
