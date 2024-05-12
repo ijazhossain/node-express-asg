@@ -1,4 +1,4 @@
-import { Schema, model } from 'mongoose';
+import { Query, Schema, model } from 'mongoose';
 import {
   TAddress,
   TOrders,
@@ -63,4 +63,11 @@ userSchema.post('save', function (doc, next) {
   doc.password = '';
   next();
 });
+
+// middleware to hide deleted user
+userSchema.pre(/^find/, function (this: Query<TUser, Document>, next) {
+  this.find({ isActive: { $eq: true } });
+  next();
+});
+
 export const User = model<TUser, UserModel>('User', userSchema);
